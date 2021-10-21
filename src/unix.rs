@@ -143,7 +143,7 @@ pub fn init(io: &UdpSocket) -> io::Result<SocketType> {
 }
 
 #[cfg(not(any(target_os = "macos", target_os = "ios")))]
-pub fn send(io: &UdpSocket, transmits: &[Transmit]) -> io::Result<usize> {
+pub fn send<S: std::os::unix::io::AsRawFd>(io: &S, transmits: &[Transmit]) -> io::Result<usize> {
     let mut msgs: [libc::mmsghdr; BATCH_SIZE] = unsafe { mem::zeroed() };
     let mut iovecs: [libc::iovec; BATCH_SIZE] = unsafe { mem::zeroed() };
     let mut cmsgs = [cmsg::Aligned([0u8; CMSG_LEN]); BATCH_SIZE];
@@ -192,7 +192,7 @@ pub fn send(io: &UdpSocket, transmits: &[Transmit]) -> io::Result<usize> {
 }
 
 #[cfg(any(target_os = "macos", target_os = "ios"))]
-pub fn send(io: &UdpSocket, transmits: &[Transmit]) -> io::Result<usize> {
+pub fn send<S: std::os::unix::io::AsRawFd>(io: &S, transmits: &[Transmit]) -> io::Result<usize> {
     let mut hdr: libc::msghdr = unsafe { mem::zeroed() };
     let mut iov: libc::iovec = unsafe { mem::zeroed() };
     let mut ctrl = cmsg::Aligned([0u8; CMSG_LEN]);
@@ -221,8 +221,8 @@ pub fn send(io: &UdpSocket, transmits: &[Transmit]) -> io::Result<usize> {
 }
 
 #[cfg(not(any(target_os = "macos", target_os = "ios")))]
-pub fn recv(
-    io: &UdpSocket,
+pub fn recv<S: std::os::unix::io::AsRawFd>(
+    io: &S,
     bufs: &mut [IoSliceMut<'_>],
     meta: &mut [RecvMeta],
 ) -> io::Result<usize> {
@@ -264,8 +264,8 @@ pub fn recv(
 }
 
 #[cfg(any(target_os = "macos", target_os = "ios"))]
-pub fn recv(
-    io: &UdpSocket,
+pub fn recv<S: std::os::unix::io::AsRawFd>(
+    io: &S,
     bufs: &mut [IoSliceMut<'_>],
     meta: &mut [RecvMeta],
 ) -> io::Result<usize> {
