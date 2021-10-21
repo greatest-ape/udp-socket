@@ -3,7 +3,7 @@ mod cmsg;
 mod proto;
 mod socket;
 #[cfg(unix)]
-mod unix;
+pub mod unix;
 
 pub use proto::{EcnCodepoint, RecvMeta, SocketType, Transmit, UdpCapabilities};
 pub use socket::UdpSocket;
